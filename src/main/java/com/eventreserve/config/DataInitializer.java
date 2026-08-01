@@ -1,7 +1,9 @@
 package com.eventreserve.config;
 
 import com.eventreserve.entity.Seat;
+import com.eventreserve.entity.User;
 import com.eventreserve.repository.SeatRepository;
+import com.eventreserve.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -12,15 +14,22 @@ import java.util.List;
 public class DataInitializer implements CommandLineRunner {
 
     private final SeatRepository seatRepository;
+    private final UserRepository userRepository;
 
-    // Iniekcja zależności przez konstruktor (dobre praktyki!)
-    public DataInitializer(SeatRepository seatRepository) {
+    public DataInitializer(SeatRepository seatRepository, UserRepository userRepository) {
         this.seatRepository = seatRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
     public void run(String... args) {
-        // Tworzymy przykładowe miejsca za pomocą wygenerowanego przez Lombok Builder-a
+        User user = User.builder()
+                .username("Will Smith")
+                .email("will.smith@example.com")
+                .build();
+
+        userRepository.save(user);
+
         Seat seat1 = Seat.builder()
                 .seatNumber("A-1")
                 .price(new BigDecimal("120.00"))
@@ -39,9 +48,8 @@ public class DataInitializer implements CommandLineRunner {
                 .isReserved(true)
                 .build();
 
-        // Zapisujemy listę miejsc w bazie danych
         seatRepository.saveAll(List.of(seat1, seat2, seat3));
 
-        System.out.println("✅ Pomyślnie załadowano wstępne dane do bazy!");
+        System.out.println("Successfully loaded users and seats data!");
     }
 }

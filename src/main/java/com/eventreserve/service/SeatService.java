@@ -22,7 +22,7 @@ public class SeatService {
 
     public Seat getSeatById(Long id) {
         return seatRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Nie znaleziono miejsca o ID: " + id));
+                .orElseThrow(() -> new RuntimeException("Seat: " + id + " not found!"));
     }
 
     @Transactional
@@ -30,7 +30,7 @@ public class SeatService {
         Seat seat = getSeatById(id);
 
         if (seat.isReserved()) {
-            throw new IllegalStateException("Miejsce o ID " + id + " jest już zarezerwowane!");
+            throw new IllegalStateException("Seat " + id + " is already reserved!");
         }
 
         seat.setReserved(true);

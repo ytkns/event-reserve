@@ -11,24 +11,17 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Map<String, String>> handleIllegalArgument(IllegalArgumentException ex) {
-        Map<String, String> response = new HashMap<>();
-        response.put("error", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-    }
-
-    @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<Map<String, String>> handleIllegalState(IllegalStateException ex) {
-        Map<String, String> response = new HashMap<>();
-        response.put("error", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-    }
-
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<Map<String, String>> handleRuntimeException(RuntimeException ex) {
+    @ExceptionHandler({ResourceNotFoundException.class, ReservationNotFoundException.class})
+    public ResponseEntity<Map<String, String>> handleNotFoundExceptions(RuntimeException ex) {
         Map<String, String> response = new HashMap<>();
         response.put("error", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(SeatIsAlreadyReservedException.class)
+    public ResponseEntity<Map<String, String>> handleSeatIsAlreadyReservedException(SeatIsAlreadyReservedException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 }

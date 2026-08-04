@@ -1,9 +1,11 @@
 package com.eventreserve.service;
 
 import com.eventreserve.dto.ReservationRequestDto;
+import com.eventreserve.dto.ReservationResponseDto;
 import com.eventreserve.entity.Reservation;
 import com.eventreserve.entity.Seat;
 import com.eventreserve.entity.User;
+import com.eventreserve.exception.*;
 import com.eventreserve.repository.ReservationRepository;
 import com.eventreserve.repository.SeatRepository;
 import com.eventreserve.repository.UserRepository;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class ReservationService {
@@ -28,27 +31,26 @@ public class ReservationService {
     }
 
     @Transactional
-    public Reservation createReservation(ReservationRequestDto requestDto) {
+    public ReservationResponseDto createReservation(ReservationRequestDto requestDto) {
         User user = userRepository.findById(requestDto.getUserID())
-                .orElseThrow(() -> new RuntimeException("User: " + requestDto.getUserID() + " not found!"));
+                .orElseThrow(() -> new ResourceNotFoundException("User: " + requestDto.getUserID() + " not found!"));
 
         Seat seat = seatRepository.findById(requestDto.getSeatID())
-                .orElseThrow(() -> new RuntimeException("Seat: " + requestDto.getSeatID() + " not found!"));
+                .orElseThrow(() -> new ResourceNotFoundException("Seat: " + requestDto.getSeatID() + " not found!"));
 
         if (seat.isReserved()) {
-            throw new IllegalStateException("Seat " + seat.getSeatID() + " is already reserved!");
+            throw new SeatIsAlreadyReservedException("Seat " + seat.getSeatID() + " is already reserved!");
         }
 
         seat.setReserved(true);
-        seatRepository.save(seat);
 
-        Reservation reservation = Reservation.builder()
-                .user(user)
-                .seat(seat)
-                .reservationTime(LocalDateTime.now())
-                .build();
+        Reservation reservation = new Reservation();
+        reservation.setUser(user);
+        reservation.setSeat(seat);
+        reservation.setReservationTime(LocalDateTime.now());
 
-        return reservationRepository.save(reservation);
+        Reservation savedReservation = reservationRepository.save(reservation);
+        return ReservationResponseDto.fromEntity(savedReservation);
     }
 
     @Transactional
@@ -63,6 +65,21 @@ public class ReservationService {
 
         reservationRepository.delete(reservation);
     }
+
+    @Transactional(readOnly = true)
+    public List<ReservationResponseDto> getAllReservations(){
+        return reservationRepository.findAll().stream()
+                .map(ReservationResponseDto::fromEntity)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<ReservationResponseDto> getReservationsByUserID(Long userID) {
+        return reservationRepository.findByUserUserID(userID).stream()
+                .map(ReservationResponseDto::fromEntity)
+                .toList();
+    }
+
 
 
 }

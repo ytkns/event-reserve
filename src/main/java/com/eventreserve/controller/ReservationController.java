@@ -1,12 +1,14 @@
 package com.eventreserve.controller;
 
 import com.eventreserve.dto.ReservationRequestDto;
+import com.eventreserve.dto.ReservationResponseDto;
 import com.eventreserve.entity.Reservation;
 import com.eventreserve.service.ReservationService;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/reservations")
@@ -19,7 +21,7 @@ public class ReservationController {
     }
 
     @PostMapping
-    public Reservation createReservation(@RequestBody ReservationRequestDto requestDto) {
+    public ReservationResponseDto createReservation(@RequestBody ReservationRequestDto requestDto) {
         return reservationService.createReservation(requestDto);
     }
 
@@ -27,5 +29,15 @@ public class ReservationController {
     public ResponseEntity<Void> cancelReservation(@PathVariable Long id) {
         reservationService.cancelReservation(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping
+    public List<ReservationResponseDto> getAllReservations() {
+        return reservationService.getAllReservations();
+    }
+
+    @GetMapping("/user/{userID}")
+    public List<ReservationResponseDto> getReservationsByUserID(@PathVariable Long userID) {
+        return reservationService.getReservationsByUserID(userID);
     }
 }

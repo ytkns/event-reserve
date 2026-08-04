@@ -50,4 +50,19 @@ public class ReservationService {
 
         return reservationRepository.save(reservation);
     }
+
+    @Transactional
+    public void cancelReservation(Long id){
+        Reservation reservation = reservationRepository.findById(id).orElseThrow(
+                () -> new RuntimeException("Reservation " + id + "does not exist!"));
+
+        Seat seat = reservation.getSeat();
+
+        if(seat!=null)
+            seat.setReserved(false);
+
+        reservationRepository.delete(reservation);
+    }
+
+
 }

@@ -5,6 +5,8 @@ import com.eventreserve.entity.Reservation;
 import com.eventreserve.service.ReservationService;
 
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+
 
 @RestController
 @RequestMapping("/api/reservations")
@@ -19,5 +21,11 @@ public class ReservationController {
     @PostMapping
     public Reservation createReservation(@RequestBody ReservationRequestDto requestDto) {
         return reservationService.createReservation(requestDto);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> cancelReservation(@PathVariable Long id) {
+        reservationService.cancelReservation(id);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -4,6 +4,7 @@ import com.eventreserve.entity.Seat;
 import com.eventreserve.entity.User;
 import com.eventreserve.repository.SeatRepository;
 import com.eventreserve.repository.UserRepository;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 

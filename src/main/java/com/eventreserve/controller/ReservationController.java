@@ -2,9 +2,9 @@ package com.eventreserve.controller;
 
 import com.eventreserve.dto.ReservationRequestDto;
 import com.eventreserve.dto.ReservationResponseDto;
-import com.eventreserve.entity.Reservation;
 import com.eventreserve.service.ReservationService;
 
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
@@ -21,7 +21,7 @@ public class ReservationController {
     }
 
     @PostMapping
-    public ReservationResponseDto createReservation(@RequestBody ReservationRequestDto requestDto) {
+    public ReservationResponseDto createReservation(@Valid @RequestBody ReservationRequestDto requestDto) {
         return reservationService.createReservation(requestDto);
     }
 

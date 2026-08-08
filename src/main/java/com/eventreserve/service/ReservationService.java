@@ -56,7 +56,7 @@ public class ReservationService {
     @Transactional
     public void cancelReservation(Long id){
         Reservation reservation = reservationRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Reservation " + id + "does not exist!"));
+                () -> new ReservationNotFoundException("Reservation " + id + "does not exist!"));
 
         Seat seat = reservation.getSeat();
 

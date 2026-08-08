@@ -18,4 +18,5 @@ public class ReservationRequestDto {
     @NotNull(message = "seatID field is mandatory")
     @Positive(message = "seatID must be a positive number")
     private Long seatID;
+
 }
